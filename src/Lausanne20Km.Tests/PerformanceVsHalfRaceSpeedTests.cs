@@ -21,6 +21,7 @@ namespace Lausanne20Km.Tests
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
         }
         
+        [Ignore]
         [TestMethod]
         public void CsvIsLoaded_CsvFile_AnyResults()
         {
@@ -38,7 +39,6 @@ namespace Lausanne20Km.Tests
 
         private static string GetResultAsStr(RaceResult raceResult)
             => $"age:{raceResult.age}, time:{raceResult.GetTotalTimeAsTimeSpan()}";
-
 
     }
 }

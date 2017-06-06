@@ -32,7 +32,7 @@ namespace Lausanne20Km
                 var progressionSumary20km = Analyzers.GetProgressionSummary(participantsResults9CompletedRaces, distance: 20);
                 var ageGenderParticipation20km = Analyzers.GetAgeGenderParticipation(raceResults, distance: 20);
                 var ageGenderAverageTime20km = Analyzers.GetAgeGenderAverageTime(raceResults, distance: 20, minDataSize: 30);
-                var part1VsPart2Dispersion = PerformanceVsHalfRaceSpeedAnalyzer.GetXYResults(raceResults, distance: 20, minDataSize: 100);
+                var part1VsPart2Dispersion = PerformanceVsHalfRaceSpeedAnalyzer.GetXYResults(raceResults, distance: 20, minDataSize: 300);
 
                 SaveResultsToFile(baseDataPath, "confidenceIntervalTimeByAgeForMen.csv", confidenceIntervalTimeByAgeForMen);
                 SaveResultsToFile(baseDataPath, "progressionDispersion2.csv", progressionDispersion);
