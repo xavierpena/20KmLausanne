@@ -126,7 +126,7 @@ namespace Lausanne20Km.Tests
             }
         }
 
-        [Ignore]
+        //[Ignore]
         [TestMethod]
         public void ParseAllLocalResultsAndSaveToCsv()
         {

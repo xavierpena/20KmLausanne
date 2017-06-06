@@ -24,13 +24,18 @@ namespace Lausanne20Km.Models
             // empty constructor
         }
 
-        public TimeSpan? GetTimeSpan()
+        public TimeSpan? GetTotalTimeAsTimeSpan()
+            => ParseAsTimeSpan(this.temps);
+
+        public static TimeSpan? ParseAsTimeSpan(string input)
         {
-            if (this.temps == "---")
+            if (input.Contains("---"))
                 return null;
 
-            this.temps = this.temps.Contains(":") ? this.temps : $"0:{this.temps}";
-            return TimeSpan.ParseExact(this.temps, "h\\:mm\\.ss", null);
+            if (input.Contains(":"))
+                return TimeSpan.ParseExact(input, "h\\:mm\\.ss", null);
+            else
+                return TimeSpan.ParseExact(input, "mm\\.ss", null);
         }
 
         public Gender GetGender()

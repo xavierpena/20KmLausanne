@@ -90,7 +90,10 @@ namespace Lausanne20Km.Repositories
                 model.temps_partiel_1 = parts[1].TrimStart().Split(' ')[0].Trim();
                 model.temps_partiel_2 = parts[2].TrimStart().Split(' ')[0].Trim();
             }
-            
+
+            //if (model.temps_partiel_1 == "0:----" || model.temps_partiel_2 == "0:----")
+            //    model.temps_partiel_2 = model.temps_partiel_2;
+
             // Remove last comma from "race time":
             model.temps = model.temps.Substring(0, model.temps.Length - 1);
 

@@ -9,9 +9,11 @@ namespace Lausanne20Km
     {
         static void Main(string[] args)
         {
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+
             try
             {
-                var baseDataPath = args[0];
+                var baseDataPath = @"..\..\..\..\..\data";
                 var csvDataFileFullPath = Path.Combine(baseDataPath, "data.csv");
 
                 //// Web acquisition:
@@ -19,20 +21,25 @@ namespace Lausanne20Km
                 //RaceResultCsvRepository.SaveAll(csvDataFileFullPath, results);
 
                 // Csv reader:
-                var results = RaceResultCsvRepository.GetAll(csvDataFileFullPath);
-                var analyzer = new Analyzer(results);
+                var raceResults = RaceResultCsvRepository.GetAll(csvDataFileFullPath);                
+                var participantRepository = new ParticipantRepository(raceResults);
 
-                var confidenceIntervalTimeByAgeForMen = analyzer.GetConfidenceIntervalTimeByAgeForMen(distance: 20, minDataSize: 100);
-                var progressionDispersion = analyzer.GetProgressionDispersion(distance: 20, minNumberOfCompletedRaces: 5);
-                var progressionSumary20km = analyzer.GetProgressionSummary(distance: 20);
-                var ageGenderParticipation20km = analyzer.GetAgeGenderParticipation(distance: 20);
-                var ageGenderAverageTime20km = analyzer.GetAgeGenderAverageTime(distance: 20, minDataSize: 30);
+                var participantsResults9CompletedRaces = participantRepository.GetAllCompletedNRaces(distance: 20, minNumberOfCompletedRaces: 9);
+                var participantsResults5CompletedRaces = participantRepository.GetAllCompletedNRaces(distance: 20, minNumberOfCompletedRaces: 5);
+
+                var confidenceIntervalTimeByAgeForMen = Analyzers.GetConfidenceIntervalTimeByAgeForMen(raceResults, distance: 20, minDataSize: 100);
+                var progressionDispersion = Analyzers.GetProgressionDispersion(participantsResults5CompletedRaces, distance: 20);
+                var progressionSumary20km = Analyzers.GetProgressionSummary(participantsResults9CompletedRaces, distance: 20);
+                var ageGenderParticipation20km = Analyzers.GetAgeGenderParticipation(raceResults, distance: 20);
+                var ageGenderAverageTime20km = Analyzers.GetAgeGenderAverageTime(raceResults, distance: 20, minDataSize: 30);
+                var part1VsPart2Dispersion = PerformanceVsHalfRaceSpeedAnalyzer.GetXYResults(raceResults, distance: 20, minDataSize: 100);
 
                 SaveResultsToFile(baseDataPath, "confidenceIntervalTimeByAgeForMen.csv", confidenceIntervalTimeByAgeForMen);
                 SaveResultsToFile(baseDataPath, "progressionDispersion2.csv", progressionDispersion);
                 SaveResultsToFile(baseDataPath, "progressionSumary20km.csv", progressionSumary20km);
                 SaveResultsToFile(baseDataPath, "ageGenderParticipation20km.csv", ageGenderParticipation20km);
                 SaveResultsToFile(baseDataPath, "ageGenderAverageTime20km.csv", ageGenderAverageTime20km);
+                SaveResultsToFile(baseDataPath, "performanceVsHalfRaceSpeed.csv", part1VsPart2Dispersion);
 
                 Console.WriteLine("Finished.");
             }

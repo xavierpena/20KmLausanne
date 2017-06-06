@@ -7,23 +7,14 @@ using Lausanne20Km.Repositories;
 
 namespace Lausanne20Km.Business
 {
-    public class Analyzer
+    public static class Analyzers
     {
         private const string TimeSpanStrFormat = "hh\\:mm\\:ss";
 
-        private List<RaceResult> _results;
-        private ParticipantRepository _participantRepository;
-
-        public Analyzer(List<RaceResult> results)
+        public static string GetAgeGenderParticipation(List<RaceResult> raceResults, int distance)
         {
-            _results = results;
-            _participantRepository = new ParticipantRepository(_results);
-        }
-
-        public string GetAgeGenderParticipation(int distance)
-        {
-            var menResults = GetFilteredResults(distance, Gender.Male);
-            var womenResults = GetFilteredResults(distance, Gender.Female);
+            var menResults = Shared.GetFilteredResults(raceResults, distance, Gender.Male);
+            var womenResults = Shared.GetFilteredResults(raceResults, distance, Gender.Female);
 
             var histogramMen = menResults
                 .GroupBy(x => x.age)
@@ -33,7 +24,7 @@ namespace Lausanne20Km.Business
                 .GroupBy(x => x.age)
                 .ToDictionary(x => x.Key, x => x.Count());
 
-            var mergedKeys = GetMergedKeys(histogramMen, histogramWomen);
+            var mergedKeys = Shared.GetMergedKeys(histogramMen, histogramWomen);
 
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"age,num. of men,num. of women");
@@ -48,17 +39,17 @@ namespace Lausanne20Km.Business
             return stringBuilder.ToString();
         }
 
-        public string GetAgeGenderAverageTime(int distance, int minDataSize)
+        public static string GetAgeGenderAverageTime(List<RaceResult> raceResults, int distance, int minDataSize)
         {
-            var menResults = GetFilteredResults(distance, Gender.Male);
-            var womenResults = GetFilteredResults(distance, Gender.Female);
+            var menResults = Shared.GetFilteredResults(raceResults, distance, Gender.Male);
+            var womenResults = Shared.GetFilteredResults(raceResults, distance, Gender.Female);
 
             var histogramMen = menResults
                 .GroupBy(x => x.age)
                 .Where(x => x.Count() > minDataSize)
                 .ToDictionary(
                         x => x.Key, 
-                        x => x.Select(y => y.GetTimeSpan().Value.TotalMilliseconds).Average()
+                        x => x.Select(y => y.GetTotalTimeAsTimeSpan().Value.TotalMilliseconds).Average()
                     );
 
             var histogramWomen = womenResults
@@ -66,10 +57,10 @@ namespace Lausanne20Km.Business
                 .Where(x => x.Count() > minDataSize)
                 .ToDictionary(
                         x => x.Key,
-                        x => x.Select(y => y.GetTimeSpan().Value.TotalMilliseconds).Average()
+                        x => x.Select(y => y.GetTotalTimeAsTimeSpan().Value.TotalMilliseconds).Average()
                     );
 
-            var mergedKeys = GetMergedKeys(histogramMen, histogramWomen);
+            var mergedKeys = Shared.GetMergedKeys(histogramMen, histogramWomen);
 
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"age,men,women");
@@ -84,9 +75,9 @@ namespace Lausanne20Km.Business
             return stringBuilder.ToString();
         }
 
-        public string GetConfidenceIntervalTimeByAgeForMen(int distance, int minDataSize)
+        public static string GetConfidenceIntervalTimeByAgeForMen(List<RaceResult> raceResults, int distance, int minDataSize)
         {
-            var menResults = GetFilteredResults(distance, Gender.Male);
+            var menResults = Shared.GetFilteredResults(raceResults, distance, Gender.Male);
 
             var confidenceIntervals = new double[] { 0.05, 0.5, 0.95 };
 
@@ -99,7 +90,7 @@ namespace Lausanne20Km.Business
                     .ToDictionary(
                             x => x.Key,
                             x => GetConfidenceValueAsMilliseconds(
-                                    x.Select(y => y.GetTimeSpan().Value).ToList(),
+                                    x.Select(y => y.GetTotalTimeAsTimeSpan().Value).ToList(),
                                     confidenceInterval
                                 )
                         );
@@ -130,7 +121,7 @@ namespace Lausanne20Km.Business
         /// <summary>
         /// For example: get the time of the participant that beat the lower 20% of all participants
         /// </summary>
-        private double GetConfidenceValueAsMilliseconds(List<TimeSpan> times, double confidenceInterval)
+        private static double GetConfidenceValueAsMilliseconds(List<TimeSpan> times, double confidenceInterval)
         {
             times.Sort();
             var length = times.Count;
@@ -141,16 +132,14 @@ namespace Lausanne20Km.Business
         /// <summary>
         /// Progression (classified by age) for participants that have completed all races.
         /// </summary>
-        public string GetProgressionSummary(int distance)
-        {
-            var participantsResults = _participantRepository.GetAllCompletedNRaces(distance, minNumberOfCompletedRaces: 9);
-
+        public static string GetProgressionSummary(Dictionary<Participant, List<RaceResult>> participantsResults, int distance)
+        {        
             var summaryPerParticipant = new Dictionary<Participant, Tuple<TimeSpan, TimeSpan>>();
             foreach (var pair in participantsResults)
             {
                 var participant = pair.Key;
-                var minTime = pair.Value.Min(x => x.GetTimeSpan().Value);
-                var maxTime = pair.Value.Max(x => x.GetTimeSpan().Value);
+                var minTime = pair.Value.Min(x => x.GetTotalTimeAsTimeSpan().Value);
+                var maxTime = pair.Value.Max(x => x.GetTotalTimeAsTimeSpan().Value);
 
                 summaryPerParticipant.Add(participant, new Tuple<TimeSpan, TimeSpan>(minTime, maxTime));             
             }
@@ -168,16 +157,14 @@ namespace Lausanne20Km.Business
             return stringBuilder.ToString();
         }
 
-        public string GetProgressionDispersion(int distance, int minNumberOfCompletedRaces)
+        public static string GetProgressionDispersion(Dictionary<Participant, List<RaceResult>> participantsResults, int distance)
         {
-            var participantsResults = _participantRepository.GetAllCompletedNRaces(distance, minNumberOfCompletedRaces);
-
             var summaryPerParticipant = new List<Tuple<TimeSpan, TimeSpan>>();
             foreach (var pair in participantsResults)
             {
                 var participant = pair.Key;
-                var minTime = pair.Value.Min(x => x.GetTimeSpan().Value);
-                var maxTime = pair.Value.Max(x => x.GetTimeSpan().Value);
+                var minTime = pair.Value.Min(x => x.GetTotalTimeAsTimeSpan().Value);
+                var maxTime = pair.Value.Max(x => x.GetTotalTimeAsTimeSpan().Value);
 
                 if (minTime.TotalMinutes < 60)
                     continue;
@@ -205,10 +192,8 @@ namespace Lausanne20Km.Business
         /// <summary>
         /// Progression (classified by age) for participants that have completed all races.
         /// </summary>
-        public string GetProgressionDetails(int distance)
-        {
-            var participantsResults = _participantRepository.GetAllCompletedNRaces(distance, minNumberOfCompletedRaces: 9);
-
+        public static string GetProgressionDetails(Dictionary<Participant, List<RaceResult>> participantsResults, int distance)
+        {            
             var resultsPerAgeAndParticipant = new SortedDictionary<int, Dictionary<Participant, TimeSpan>>();
             foreach(var pair in participantsResults)
             {
@@ -217,7 +202,7 @@ namespace Lausanne20Km.Business
                 {
                     var age = int.Parse(result.age);
                     var year = int.Parse(result.year);
-                    var time = result.GetTimeSpan().Value;
+                    var time = result.GetTotalTimeAsTimeSpan().Value;
 
                     if (!resultsPerAgeAndParticipant.ContainsKey(age))
                         resultsPerAgeAndParticipant.Add(age, new Dictionary<Participant, TimeSpan>());
@@ -249,31 +234,6 @@ namespace Lausanne20Km.Business
             
             return stringBuilder.ToString();
         }
-
-        private static List<T1> GetMergedKeys<T1, T2>(Dictionary<T1, T2> histogramMen, Dictionary<T1, T2> histogramWomen)
-        {
-            var menKeys = histogramMen.Keys.ToList();
-            var womenKeys = histogramWomen.Keys.ToList();
-
-            var totalKeys = menKeys;
-            totalKeys.AddRange(womenKeys);
-            totalKeys = totalKeys
-                .Distinct()
-                .OrderBy(x => x).ToList();
-
-            return totalKeys;
-        }
-
-        private List<RaceResult> GetFilteredResults(int distanceId, Gender gender)
-            => _results
-                .Where( 
-                    x => 
-                        x.IsDistance(distanceId) 
-                        && x.participant.Gender == gender 
-                        && x.IsValidAge()
-                        && x.IsValidTime()
-                    )
-                .ToList();
 
     }
 }
