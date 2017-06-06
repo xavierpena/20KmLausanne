@@ -14,17 +14,40 @@ namespace Lausanne20Km.Repositories
     {
         public static List<RaceResult> GetAll()
         {
+            var webResponsesByYear = GetAllWebResponsesByYear();
+            var results = ParseAllWebResponses(webResponsesByYear);
+            return results;
+        }
+
+        private static List<RaceResult> ParseAllWebResponses(Dictionary<int, List<string>> webResponsesByYear)
+        {
             var results = new List<RaceResult>();
-            for(var year = 2017; year >= 2009; year--)
+            foreach (var pair in webResponsesByYear)
+            {
+                var year = pair.Key;
+                foreach (var webpageResponseStr in pair.Value)
+                {
+                    var partialResults = GetDataLinesFromWebResponse(webpageResponseStr);
+                    List<RaceResult> partialRaceResults = ParseLines(year, partialResults);
+                    results.AddRange(partialRaceResults);
+                }
+            }
+
+            return results;
+        }
+
+        public static Dictionary<int, List<string>> GetAllWebResponsesByYear()
+        {
+            var results = new Dictionary<int, List<string>>();
+            for (var year = 2017; year >= 2009; year--)
             {
                 Console.WriteLine(year);
+                results.Add(year, new List<string>());
                 for (var letter = 'A'; letter <= 'Z'; letter++)
                 {
                     Console.WriteLine(letter);
                     var webpageResponseStr = DownloadWebpageStr(year, letter);
-                    var partialResults = GetDataLinesFromWebResponse(webpageResponseStr);
-                    List<RaceResult> partialRaceResults = ParseLines(year, partialResults);
-                    results.AddRange(partialRaceResults);
+                    results[year].Add(webpageResponseStr);
                 }
             }
             return results;

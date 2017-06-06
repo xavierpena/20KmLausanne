@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Lausanne20Km.Repositories;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using Lausanne20Km.Models;
 
 namespace Lausanne20Km.Tests
 {
@@ -42,7 +44,7 @@ namespace Lausanne20Km.Tests
         [TestMethod]
         public void HtmlContainsData_LocalHtmlFile_AnyResults()
         {
-            var filePath = GetTestWebResponseDataFile();
+            var filePath = GetWebResponseLocalDataFilePath(2017, 'A');
             var webpageResponseStr = File.ReadAllText(filePath);
             var results = RaceResultWebRepository.GetDataLinesFromWebResponse(webpageResponseStr);
             Assert.IsTrue(results.Any());
@@ -51,17 +53,51 @@ namespace Lausanne20Km.Tests
         [TestMethod]
         public void HtmlIsParsed_LocalHtmlFile_AnyResults()
         {
-            var filePath = GetTestWebResponseDataFile();
+            var filePath = GetWebResponseLocalDataFilePath(2017, 'A');
             var webpageResponseStr = File.ReadAllText(filePath);
             var dataLines = RaceResultWebRepository.GetDataLinesFromWebResponse(webpageResponseStr);
             var parsedResults = RaceResultWebRepository.ParseLines(2017, dataLines);
             Assert.IsTrue(dataLines.Any());
-        }        
+        }
 
-#region "Helpers"
+        [TestMethod]
+        public void AllHtmlsAreParsed_LocalHtmlFiles_AnyResults()
+        {
+            var allWebResponsesByYear = GetAllWebResponsesByYear();
+            var raceResults = new List<RaceResult>();
+            foreach(var pair in allWebResponsesByYear)
+            {
+                var year = pair.Key;
+                foreach(var webpageResponseStr in pair.Value)
+                {
+                    var partialDataLines = RaceResultWebRepository.GetDataLinesFromWebResponse(webpageResponseStr);
+                    var parsedResults = RaceResultWebRepository.ParseLines(year, partialDataLines);
+                    raceResults.AddRange(parsedResults);
+                }
+            }
+            Assert.IsTrue(raceResults.Any());
+        }
 
-        private static string GetTestWebResponseDataFile()
-            => Path.Combine(RawWebDataDirectory, "2017", $"A.html");
+        #region "Helpers"
+
+        private static string GetWebResponseLocalDataFilePath(int year, char letter)
+            => Path.Combine(RawWebDataDirectory, year.ToString(), $"{letter}.html");
+
+        private Dictionary<int, List<string>> GetAllWebResponsesByYear()
+        {
+            var results = new Dictionary<int, List<string>>();
+            for (var year = 2017; year >= 2009; year--)
+            {
+                results.Add(year, new List<string>());
+                for (var letter = 'A'; letter <= 'Z'; letter++)
+                {             
+                    var filePath = GetWebResponseLocalDataFilePath(year, letter);
+                    var webpageResponseStr = File.ReadAllText(filePath);
+                    results[year].Add(webpageResponseStr);
+                }
+            }
+            return results;
+        }
 
         [Ignore]
         [TestMethod]
