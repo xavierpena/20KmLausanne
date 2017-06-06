@@ -1,0 +1,58 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://www.datasport.com/sys/myds/js/jquery.colorbox-min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="https://www.datasport.com/sys/myds/css/colorbox/colorbox.css">
+<script>
+$().ready(function() {
+$("table").css('white-space', 'normal');
+$("table").css('line-height', 'normal');
+$("table").css('font-weight', 'normal');
+$("table").css('font-size', 'medium');
+$("table").css('font-variant', 'normal');
+$("table").css('font-style', 'normal');
+$("table").css('color', '-webkit-text');
+$("table").css('text-align', 'start');
+$("span.myds").css('cursor', 'pointer');
+$("span.myds").css('color', '#CC0000');
+$("span.myds").click(function() {
+var myCode = $(this).attr('acode');
+$(this).colorbox({
+href: 'https://www.datasport.com/sys/myds/ajax/getDSInfo.htm?acode=' + myCode,
+iframe: true,
+width: 810,
+height: 660
+});
+});
+});
+</script>
+<script src="https://www.datasport.com/ds/header.htm" type="text/javascript"></script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-41202176-2']);
+  _gaq.push(['_setDomainName', 'datasport.com']);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+  (function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+<html>
+<head>
+<title></title>
+</head>
+<body><pre>
+<h3><a href=".">20 km de Lausanne 2012</a> - par nom "X"</h3>
+<font size="2">catégorie  rang nom                                 an   équipe/lieu                     temps      retard    doss           moyenne
+</font><font size="1">---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</font><font size="2">2-EcolD    186. <span class="myds" acode="UC6GBZYHL">Xu Lorie                           </span> 2002 CYP2/43                       11.14,8      3.20,0 (15184) <a href="http://www.datasport.com/jump/14102/15184/ah/dipl.htm" target="_blank">diplôme</a>      5.37
+10-Hesp     76. <span class="myds" acode="H9LRK5GQT">Xydas Dario                        </span> 1993 Lausanne                      46.50,6      9.36,0  (6185) <a href="http://www.datasport.com/jump/14102/6185/ca/dipl.htm" target="_blank">diplôme</a>      4.41
+<br>
+total 2
+</font>
+</pre></body></html>

@@ -1,0 +1,57 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://www.datasport.com/sys/myds/js/jquery.colorbox-min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="https://www.datasport.com/sys/myds/css/colorbox/colorbox.css">
+<script>
+$().ready(function() {
+$("table").css('white-space', 'normal');
+$("table").css('line-height', 'normal');
+$("table").css('font-weight', 'normal');
+$("table").css('font-size', 'medium');
+$("table").css('font-variant', 'normal');
+$("table").css('font-style', 'normal');
+$("table").css('color', '-webkit-text');
+$("table").css('text-align', 'start');
+$("span.myds").css('cursor', 'pointer');
+$("span.myds").css('color', '#CC0000');
+$("span.myds").click(function() {
+var myCode = $(this).attr('acode');
+$(this).colorbox({
+href: 'https://www.datasport.com/sys/myds/ajax/getDSInfo.htm?acode=' + myCode,
+iframe: true,
+width: 810,
+height: 660
+});
+});
+});
+</script>
+<script src="https://www.datasport.com/ds/header.htm" type="text/javascript"></script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-41202176-2']);
+  _gaq.push(['_setDomainName', 'datasport.com']);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+  (function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+<html>
+<head>
+<title></title>
+</head>
+<body><pre>
+<h3><a href=".">20 km de Lausanne 2010</a> - par nom "X"</h3>
+<font size="2">catégorie  rang nom                                 an   équipe/lieu                     temps      retard    doss           moyenne
+</font><font size="1">---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</font><font size="2">20-H20     106. <span class="myds" acode="Q8LWBLHA">Xercavins Bruno                    </span> 1989 Gland                       1:31.00,9     30.11,5   (452) <a href="http://www.datasport.com/jump/12102/452/xd/dipl.htm" target="_blank">diplôme</a>      4.33
+<br>
+total 1
+</font>
+</pre></body></html>
