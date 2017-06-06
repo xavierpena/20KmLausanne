@@ -58,7 +58,7 @@ namespace Lausanne20Km.Repositories
             var partialRaceResults = new List<RaceResult>();
             foreach (var line in partialResults.Skip(2))
             {
-                var raceResult = ParseToRaceResult(line, year);
+                var raceResult = ParseToRaceResultWithPartialRaceTimes(line, year);
                 partialRaceResults.Add(raceResult);
             }
 
@@ -68,7 +68,7 @@ namespace Lausanne20Km.Repositories
         /// <summary>
         /// Decodes the line from the website into a RaceResultModel.
         /// </summary>
-        public static RaceResult ParseToRaceResult(string line, int year)
+        public static RaceResult ParseToRaceResultWithPartialRaceTimes(string line, int year)
         {
             var model = new RaceResult();
 
@@ -81,6 +81,16 @@ namespace Lausanne20Km.Repositories
             model.equipe_ou_lieu = line.Substring(57, 27).Trim();
             model.temps = line.Substring(85, 8).Trim();
 
+            model.temps_partiel_1 = "----";
+            model.temps_partiel_2 = "----";
+
+            var parts = line.Split('¦');
+            if (parts.Length == 4)
+            {
+                model.temps_partiel_1 = parts[1].TrimStart().Split(' ')[0].Trim();
+                model.temps_partiel_2 = parts[2].TrimStart().Split(' ')[0].Trim();
+            }
+            
             // Remove last comma from "race time":
             model.temps = model.temps.Substring(0, model.temps.Length - 1);
 

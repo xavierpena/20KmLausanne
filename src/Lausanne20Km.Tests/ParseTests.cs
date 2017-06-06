@@ -13,8 +13,10 @@ namespace Lausanne20Km.Tests
     {
         private const string BasePath = @"..\..\..\..\..\data\";
         
-        private const string CsvDataFile  = BasePath + "data.txt";
+        private const string CsvDataFile  = BasePath + "data.csv";
         private const string RawWebDataDirectory = BasePath + "raw-web-data";
+
+        private const string DataLine1 = "20-H30       2. Abay Girma                          1986 Petit-Lancy                 1:00.35,1      0.04,0      (9) diplôme foto video      3.01 ¦   30.03     1.¦  30.31     2.¦";
 
         public ParseTests()
         {
@@ -76,8 +78,19 @@ namespace Lausanne20Km.Tests
                 }
             }
             Assert.IsTrue(raceResults.Any());
-        }
 
+
+            // !!!!!
+            RaceResultCsvRepository.SaveAll(CsvDataFile, raceResults);
+        }
+        
+        [TestMethod]
+        public void LineIsParse_LocalHtmlFile_AnyResults()
+        {
+            var raceResult = RaceResultWebRepository.ParseToRaceResultWithPartialRaceTimes(DataLine1, 2017);
+            Assert.IsNotNull(raceResult);
+        }
+        
         #region "Helpers"
 
         private static string GetWebResponseLocalDataFilePath(int year, char letter)

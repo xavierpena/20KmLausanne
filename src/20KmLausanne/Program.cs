@@ -12,7 +12,7 @@ namespace Lausanne20Km
             try
             {
                 var baseDataPath = args[0];
-                var csvDataFileFullPath = Path.Combine(baseDataPath, "data.txt");
+                var csvDataFileFullPath = Path.Combine(baseDataPath, "data.csv");
 
                 //// Web acquisition:
                 //var results = RaceResultWebRepository.GetAll();

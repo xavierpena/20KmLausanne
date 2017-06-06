@@ -16,6 +16,9 @@ namespace Lausanne20Km.Models
         public string equipe_ou_lieu { get; set; }
         public string temps { get; set; }
 
+        public string temps_partiel_1 { get; set; }
+        public string temps_partiel_2 { get; set; }
+
         public RaceResult()
         {
             // empty constructor

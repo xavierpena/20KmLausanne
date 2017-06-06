@@ -41,7 +41,9 @@ namespace Lausanne20Km.Repositories
                         m.participant.YearOfBirth,
                         m.age,
                         m.equipe_ou_lieu.Replace(Separator, '$'), // to avoid csv read-write misstakes 
-                        m.temps
+                        m.temps,
+                        m.temps_partiel_1,
+                        m.temps_partiel_2
                     }
                 );
         
@@ -55,7 +57,9 @@ namespace Lausanne20Km.Repositories
                 rang = cells[2],                
                 age = cells[5],
                 equipe_ou_lieu = cells[6],
-                temps = cells[7]
+                temps = cells[7],
+                temps_partiel_1 = cells[8],
+                temps_partiel_2 = cells[9]
             };
 
             var nom = cells[3];
