@@ -78,10 +78,6 @@ namespace Lausanne20Km.Tests
                 }
             }
             Assert.IsTrue(raceResults.Any());
-
-
-            // !!!!!
-            RaceResultCsvRepository.SaveAll(CsvDataFile, raceResults);
         }
         
         [TestMethod]
@@ -130,7 +126,26 @@ namespace Lausanne20Km.Tests
             }
         }
 
-#endregion
+        [Ignore]
+        [TestMethod]
+        public void ParseAllLocalResultsAndSaveToCsv()
+        {
+            var allWebResponsesByYear = GetAllWebResponsesByYear();
+            var raceResults = new List<RaceResult>();
+            foreach (var pair in allWebResponsesByYear)
+            {
+                var year = pair.Key;
+                foreach (var webpageResponseStr in pair.Value)
+                {
+                    var partialDataLines = RaceResultWebRepository.GetDataLinesFromWebResponse(webpageResponseStr);
+                    var parsedResults = RaceResultWebRepository.ParseLines(year, partialDataLines);
+                    raceResults.AddRange(parsedResults);
+                }
+            }            
+            RaceResultCsvRepository.SaveAll(CsvDataFile, raceResults);
+        }
+
+        #endregion
 
     }
 }
